@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Recommendation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+    <style>
+        body {
+            margin: 2em;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 2em;
+            color: #333;
+        }
+        form {
+            max-width: 300px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            width: 100%;
+            margin-bottom: 1em;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            background-color: #ff4d4d;
+            color: #fff;
+            margin: 8px 0;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #ff6666;
+        }
+        #result {
+            margin-top: 2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Music Recommendation</h1>
+    <form id="recommendForm">
+        <label for="genre">Select your favorite music genres:</label><br>
+        <input type="checkbox" name="genre" value="rock"> Rock<br>
+        <input type="checkbox" name="genre" value="pop"> Pop<br>
+        <input type="checkbox" name="genre" value="hip-hop"> Hip-Hop<br>
+        <input type="checkbox" name="genre" value="jazz"> Jazz<br>
+        <input type="checkbox" name="genre" value="reggae"> Reggae<br>
+        <input type="checkbox" name="genre" value="classica"> Classical<br>
+        <input type="checkbox" name="genre" value="country"> Country<br>
+        <input type="checkbox" name="genre" value="blues"> Blues<br>
+        <input type="checkbox" name="genre" value="metal"> Metal<br>
+        <input type="checkbox" name="genre" value="electronic"> Electronic<br>
+        <input type="checkbox" name="genre" value="folk"> Folk<br>
+        <input type="checkbox" name="genre" value="reggaeton"> Reggaeton<br>
+        <input type="checkbox" name="genre" value="indie"> Indie<br>
+        <input type="submit" value="Get Recommendations" style="text-align: center;">
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("recommendForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var genres = [];
+            var checkboxes = document.querySelectorAll('input[name="genre"]:checked');
+            checkboxes.forEach(function(checkbox) {
+                genres.push(checkbox.value);
+            });
+            fetch("/recommend", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ genres: genres })
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultDiv = document.getElementById("result");
+                resultDiv.innerHTML = "";
+                data.artists.forEach(function(artist) {
+                    var p = document.createElement("p");
+                    p.textContent = "Recommended artist: " + artist;
+                    resultDiv.appendChild(p);
+                });
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
